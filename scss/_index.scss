@@ -1,0 +1,190 @@
+
+.ads-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.ads-right {
+    img {
+        width: 100%;
+    }
+}
+.main {
+    background-image: url('../images/svg/home-page-bg.svg');
+    -webkit-background-size: contain;
+    background-size: contain;
+    -webkit-background-position: top;
+    background-position: top;
+    background-repeat: no-repeat;
+    min-height: 100vh;
+}
+
+@keyframes scroll {
+    0% {
+        transform: translateX(0%);
+    }
+    100% {
+        transform: translateX(-100%);
+    }
+}
+
+.heading-primary {
+    &__title {
+        
+        
+    }
+    &__slide {
+        display: flex;
+        align-items: center;
+        flex-wrap: nowrap;
+        overflow: hidden;
+        flex: 1;
+        justify-content: flex-end;
+    }
+    &__list {
+        display: flex;
+        flex-wrap: nowrap;
+        white-space: nowrap;
+        overflow: hidden;
+        overflow-x: auto;
+        scroll-behavior: smooth;
+        scroll-snap-type: x mandatory;
+        scrollbar-width: none;
+        max-width: 100%;
+    }
+    &__item {
+        flex: 0 0 auto;
+        white-space: nowrap;
+        scroll-snap-align: start;
+        margin-right: 8px;
+    }
+    &__link {
+        padding: 6px 16px;
+        border-radius: 6px;
+        border: 1px solid #f0f0f0;
+        height: 36px;
+        &:hover {
+            background-color: #f0f4f8;
+            color: #32383e;
+        }
+    }
+    &__control {
+        display: flex;
+        align-items: center;
+        flex-shrink: 0;                                                             
+        margin-left: 10px;                          
+
+        .button-prev,
+        .button-next {                                                                          
+            width: 36px;
+            height: 36px;
+            border-radius: 6px;
+            background-color: transparent;
+            transition: all 0.2s ease;
+            padding: 0 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: 8px;
+            cursor: pointer;
+            border-radius: 6px;
+            border: 1px solid #f0f0f0                                                                                               ;
+
+            img {
+                width: 20px;
+                height: auto;
+            }
+
+            &:hover {
+                background-color: #f0f4f8;
+            }
+        }
+    }
+
+}
+
+.block-primary {
+    display: flex;
+    &__left {
+        flex-shrink: 0;
+        max-width: 264px;
+        width: 100%;
+    }
+
+    &__center {
+        flex: 1;
+        padding-right: 24px;
+        padding-left: 24px;
+        max-width: calc(100% - 408px - 264px);
+        width: 100%;
+    }
+    &__right {
+        flex-shrink: 0;
+        max-width: 408px;
+        width: 100%;
+    }
+}
+.block-secondary {
+    display: flex;
+
+    &__left {
+        flex: 1;
+        padding-right: 24px;
+        max-width: calc(100% - 400px);
+        width: 100%;
+    }
+    &__right {
+        flex-shrink: 0;
+        max-width: 400px;
+        width: 100%;
+        padding-left: 24px;
+    }
+}
+
+.section-primary {
+    &__icon {
+
+    }
+
+    &__marquee {
+        // display: flex;
+        // flex-wrap: nowrap;
+        // white-space: nowrap;
+        // overflow: hidden;
+        // animation: scroll 24.41125s linear 0s infinite;
+        overflow-x: hidden;
+        display: flex;
+        flex-direction: row;
+        position: relative;
+        width: 100%;
+        transform: none;
+        
+        .marquee-item {
+            --play: running;
+            --direction: normal;
+            --duration: 24.41125s;
+            --delay: 0s;
+            --iteration-count: infinite;
+            --min-width: 100%;
+            flex: 0 0 auto;
+            min-width: var(--min-width);
+            z-index: 1;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            animation: scroll var(--duration) linear var(--delay) var(--iteration-count);
+            animation-play-state: var(--play);
+            animation-delay: var(--delay);
+            animation-direction: var(--direction);
+
+            &__inner {
+                flex: 0 0 auto;
+                display: flex;
+                min-width: auto;
+                flex-direction: row;
+                align-items: center;
+            }
+
+        }
+    }
+}
