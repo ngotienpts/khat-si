@@ -196,6 +196,36 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
+    // xử lý sự kiện chuyển tab
+    function handleChangeTab() {
+        const changTabs = document.querySelectorAll('.js__changeTab');
+
+        if (changTabs.length === 0) return;
+
+        changTabs.forEach((changTab) => {
+            const tabs = changTab.querySelectorAll(".js__tabItem");
+            const panes = changTab.querySelectorAll(".js__tabPane");
+
+            // 1. Xử lý chuyển Tab
+            tabs.forEach((tab, index) => {
+                tab.onclick = function() {
+                    if (this.classList.contains('active')) return;
+
+                    const pane = panes[index];
+                    if (!pane) return;
+
+                    changTab.querySelector('.js__tabItem.active')?.classList.remove('active');
+                    changTab.querySelector('.js__tabPane.active')?.classList.remove('active');
+
+                    this.classList.add('active');
+                    pane.classList.add('active');
+
+                }
+            });
+
+        });
+    }
+
 
     // khởi tạo slider với nhiều item có width auto
     function initSliderAutoItems() {
@@ -234,6 +264,21 @@ document.addEventListener("DOMContentLoaded", function () {
                     slidesPerGroup: 1,
                     autoHeight: true,
                     // loop: loopMode,
+                    grabCursor: true,
+                    effect: "creative",
+                    creativeEffect: {
+                        prev: {
+                        shadow: true,
+                        translate: [0, 0, -400],
+                        },
+                        next: {
+                        translate: ["100%", 0, 0],
+                        },
+                    },
+                    autoplay: {
+                        delay: 3000,
+                        disableOnInteraction: false,
+                    },
                     navigation: {
                         nextEl: next || null,
                         prevEl: prev || null,
@@ -248,89 +293,83 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // khởi tạo slider với 2 item custom
-function initSlideContainerCustomTwoItem() {
-    const sliderContainers = document.querySelectorAll('.js__slideContainerCustomTwoItem');
+    function initSlideContainerCustomTwoItem() {
+        const sliderContainers = document.querySelectorAll('.js__slideContainerCustomTwoItem');
 
-    sliderContainers.forEach(container => {
-        const wrapper = container.querySelector('.js__slideListCustomTwoItem');
-        const items = container.querySelectorAll('.js__slideItemCustomTwoItem');
-        const btnNext = container.querySelector('.js__nextSlide');
-        const btnPrev = container.querySelector('.js__prevSlide');
+        sliderContainers.forEach(container => {
+            const wrapper = container.querySelector('.js__slideListCustomTwoItem');
+            const items = container.querySelectorAll('.js__slideItemCustomTwoItem');
+            const btnNext = container.querySelector('.js__nextSlide');
+            const btnPrev = container.querySelector('.js__prevSlide');
 
-        // Điều kiện dừng nếu không đủ phần tử
-        if (!wrapper || items.length < 2) {
-            if (btnNext) btnNext.style.display = 'none';
-            if (btnPrev) btnPrev.style.display = 'none';
-            return;
-        }
-
-        let currentIndex = 0;
-        const EXTRA_SPACE = 8; // Khoảng cách cộng thêm cho mỗi item (thay cho gap)
-
-        const updateSlider = (index) => {
-            // Chặn giới hạn index (chỉ được cuộn tới khi item áp chót đứng đầu)
-            if (index < 0) index = 0;
-            if (index > items.length - 2) index = items.length - 2;
-
-            currentIndex = index;
-
-            // 1. Tính toán chiều rộng wrapper dựa trên 2 phần tử hiện tại
-            // Mỗi phần tử được cộng thêm EXTRA_SPACE (8px)
-            const w1 = items[currentIndex].offsetWidth + EXTRA_SPACE;
-            const w2 = items[currentIndex + 1].offsetWidth + EXTRA_SPACE;
-            const totalWidth = w1 + w2;
-
-            // Cập nhật chiều rộng wrapper để "ép" khung hình
-            wrapper.style.width = `${totalWidth}px`;
-            wrapper.style.transition = "width 0.3s ease"; // Hiệu ứng co giãn khung mượt mà
-
-            // 2. Tính toán vị trí cuộn chính xác
-            // Phải cộng dồn width + EXTRA_SPACE của tất cả các item đứng trước
-            let scrollAmount = 0;
-            for (let i = 0; i < currentIndex; i++) {
-                scrollAmount += (items[i].offsetWidth + EXTRA_SPACE);
+            // CHỈNH SỬA TẠI ĐÂY: Nếu ít hơn 3 item, ẩn nút và dừng xử lý slide
+            if (!wrapper || items.length < 3) {
+                if (btnNext) btnNext.style.display = 'none';
+                if (btnPrev) btnPrev.style.display = 'none';
+                
+                // Nếu có 1 hoặc 2 item, vẫn nên reset width wrapper về tự động để hiển thị bình thường
+                if (wrapper) wrapper.style.width = 'auto'; 
+                return;
             }
 
-            // Thực hiện cuộn mượt mà
-            wrapper.scrollTo({
-                left: scrollAmount,
-                behavior: 'smooth'
+            // Đảm bảo nút hiện lại nếu trước đó bị ẩn (phòng trường hợp nội dung thay đổi động)
+            if (btnNext) btnNext.style.display = 'flex'; // Hoặc 'block' tùy CSS của bạn
+            if (btnPrev) btnPrev.style.display = 'flex';
+
+            let currentIndex = 0;
+            const EXTRA_SPACE = 5; 
+
+            const updateSlider = (index) => {
+                if (index < 0) index = 0;
+                if (index > items.length - 2) index = items.length - 2;
+
+                currentIndex = index;
+
+                const w1 = items[currentIndex].offsetWidth + EXTRA_SPACE;
+                const w2 = items[currentIndex + 1].offsetWidth + EXTRA_SPACE;
+                const totalWidth = w1 + w2;
+
+                wrapper.style.width = `${totalWidth}px`;
+                wrapper.style.transition = "width 0.3s ease";
+
+                let scrollAmount = 0;
+                for (let i = 0; i < currentIndex; i++) {
+                    scrollAmount += (items[i].offsetWidth + EXTRA_SPACE);
+                }
+
+                wrapper.scrollTo({
+                    left: scrollAmount,
+                    behavior: 'smooth'
+                });
+
+                if (btnPrev) btnPrev.style.opacity = currentIndex === 0 ? "0.3" : "1";
+                if (btnNext) btnNext.style.opacity = currentIndex === items.length - 2 ? "0.3" : "1";
+            };
+
+            updateSlider(0);
+
+            btnNext.onclick = () => {
+                if (currentIndex < items.length - 2) {
+                    updateSlider(currentIndex + 1);
+                }
+            };
+
+            btnPrev.onclick = () => {
+                if (currentIndex > 0) {
+                    updateSlider(currentIndex - 1);
+                }
+            };
+
+            let resizeTimer;
+            window.addEventListener('resize', () => {
+                clearTimeout(resizeTimer);
+                resizeTimer = setTimeout(() => {
+                    updateSlider(currentIndex);
+                }, 100);
             });
-
-            // 3. Tùy chỉnh trạng thái nút bấm (mờ đi khi hết slide)
-            if (btnPrev) btnPrev.style.opacity = currentIndex === 0 ? "0.3" : "1";
-            if (btnNext) btnNext.style.opacity = currentIndex === items.length - 2 ? "0.3" : "1";
-        };
-
-        // Khởi tạo lần đầu
-        updateSlider(0);
-
-        // Sự kiện Click
-        btnNext.onclick = () => {
-            if (currentIndex < items.length - 2) {
-                updateSlider(currentIndex + 1);
-            }
-        };
-
-        btnPrev.onclick = () => {
-            if (currentIndex > 0) {
-                updateSlider(currentIndex - 1);
-            }
-        };
-
-        // Cập nhật lại nếu người dùng thay đổi kích thước trình duyệt
-        let resizeTimer;
-        window.addEventListener('resize', () => {
-            clearTimeout(resizeTimer);
-            resizeTimer = setTimeout(() => {
-                updateSlider(currentIndex);
-            }, 100);
         });
-    });
-}
+    }
 
-// Gọi hàm khi tài liệu đã sẵn sàng
-document.addEventListener('DOMContentLoaded', initSlideContainerCustomTwoItem);
      // Khởi tạo slider với 2 item
     function initSliderTwoItems() {
         const twoSlides = document.querySelectorAll(".js__twoSlidesContainer");
@@ -466,9 +505,11 @@ document.addEventListener('DOMContentLoaded', initSlideContainerCustomTwoItem);
         handleMoreMenu();
         handleShowSearchPc();
         handleShowSearchMb();
-        initFancybox();
-        initStickyContent();
+        handleChangeTab();
+        // initFancybox();
+        // initStickyContent();
         // slide
+        initSliderOneItems();
         initSlideContainerCustomTwoItem();
         // scroll
         window.addEventListener('scroll',handleWindowScroll);

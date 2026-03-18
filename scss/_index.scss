@@ -27,7 +27,60 @@
         transform: translateX(-100%);
     }
 }
+.pagi-red {
+    .swiper-pagination-bullet {
+        background: #e0e0e0;
+        width: 20px;
+        height: 4px;
+        border-radius: 0;
+        opacity: 1;
+    }
+    .swiper-pagination-bullet-active {
+        background: #c65c31;
+        
+    }
+}
 
+
+.same-height {
+    .swiper-wrapper {
+        display: flex;
+    }
+
+    .swiper-slide {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        height: auto;
+    }
+
+    .article {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .article-img {
+        flex-shrink: 0;
+    }
+
+    .article-content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+}
+
+.hidden.active {
+    display: block;
+}
+
+.hidden {
+    display: none;
+}
+
+/*-----------------------------------------*/
 .heading-primary {
     &__title {
         
@@ -102,7 +155,12 @@
     }
 
 }
+.heading-secondary {
+    &__title {}
 
+    
+}
+/*-----------------------------------------*/
 .block-primary {
     display: flex;
     &__left {
@@ -140,7 +198,64 @@
         padding-left: 24px;
     }
 }
+/*-----------------------------------------*/
+.block-one {
+    &:last-child {
+        border-bottom: none;
+    }
+}
+.block-two {
+    &:last-child {
+        border-bottom: none;
+    }
+}
+.block-three {
+    &__content {
+        .article {
+            &-title {
+                position: relative;
+                padding-left: 24px;
 
+                &::before {
+                    content: '';
+                    position: absolute;
+                    top: 50%;
+                    left: 0;
+                    transform: translateY(-50%);
+                    width: 8px;
+                    height: 8px;
+                    border-radius: 999px;
+                    background-color: #a24014;
+                }
+            }
+        }
+    }
+}
+.block-four {}
+.block-five {}
+.block-six {
+    &__tab {
+        border-radius: 8px;
+        padding: 4px;
+        background-color: #f0f4f8;
+
+        .tab-item {
+            background-color: transparent;
+            padding: 4px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            height: 36px;
+            cursor: pointer;
+
+            &.active {
+                background-color: #fbfcfe;
+                box-shadow: 0 2px 8px 1px rgba(0, 0, 0, 0.1);
+            }
+        }
+    }
+}
 .section-primary {
     &__icon {
 
@@ -188,3 +303,5 @@
         }
     }
 }
+/*-----------------------------------------*/
+/*-----------------------------------------*/

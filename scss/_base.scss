@@ -165,6 +165,9 @@ p {
 .w-35 {
     width: 35%;
 }
+.w-36 {
+    width: 36%;
+}
 .w-37 {
     width: 37%;
 }
@@ -351,6 +354,11 @@ p {
     display: block;
     padding-bottom: 140%;
 }
+.ratio-376x452 {
+    position: relative;
+    display: block;
+    padding-bottom: 120.21%;
+}
 .ratio-6x7 {
     position: relative;
     display: block;
@@ -426,6 +434,7 @@ p {
 }
 
 .ratio-5x7 img,
+.ratio-376x452 img,
 .ratio-6x7 img,
 .ratio-7x6 img,
 .ratio-21x8 img,
@@ -1330,9 +1339,15 @@ p {
 .border-b4-f0 {
     border-bottom: 4px solid #f0f0f0;
 }
+.border-t-636 {
+    border-top: 1px solid #636b7433;                     
+}                                                                                                                                             
 .border-b-636 {
     border-bottom: 1px solid #636b7433;                     
 }                                                                                                                                             
+.border-ee {
+    border: 1px solid #eee;
+}
 .border-r-ee {
     border-right: 1px solid #eee;
 }
