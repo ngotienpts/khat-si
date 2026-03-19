@@ -169,6 +169,150 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
 
+    // xử lý calender
+    function handlerCalendar() {
+        const calendarContainers = document.querySelectorAll('.js__calenderContainer');
+        if (!calendarContainers.length) return;
+
+        const monthNames = [
+            "Tháng 1", "Tháng 2", "Tháng 3", "Tháng 4", "Tháng 5", "Tháng 6",
+            "Tháng 7", "Tháng 8", "Tháng 9", "Tháng 10", "Tháng 11", "Tháng 12"
+        ];
+
+        calendarContainers.forEach((container) => {
+            // Cache DOM elements
+            const el = {
+                days: container.querySelector('.js__calendarDays'),
+                month: container.querySelector('.js__currentMonth'),
+                year: container.querySelector('.js__currentYear'),
+                yearList: container.querySelector('.js__yearList'),
+                prev: container.querySelector('.js__prevMonth'),
+                next: container.querySelector('.js__nextMonth'),
+                toggle: container.querySelector('.js__dropdownToggleAction'),
+            };
+
+            const today = new Date();
+            let selectedDate = new Date();
+
+            // 1. Hàm Render Lịch
+            const render = () => {
+                if (!el.days) return;
+                
+                const year = selectedDate.getFullYear();
+                const month = selectedDate.getMonth();
+
+                // Update Header
+                if (el.month) el.month.innerText = monthNames[month];
+                if (el.year) el.year.innerText = year + 543;
+
+                // Tính toán ngày
+                const firstDay = new Date(year, month, 1).getDay();
+                const lastDate = new Date(year, month + 1, 0).getDate();
+                const prevLastDate = new Date(year, month, 0).getDate();
+                const lastDayIndex = new Date(year, month + 1, 0).getDay();
+                const nextDays = (7 - lastDayIndex - 1) % 7;
+
+                let html = "";
+
+                // Ngày tháng trước
+                for (let x = firstDay; x > 0; x--) {
+                    html += `<div class="day empty">${prevLastDate - x + 1}</div>`;
+                }
+
+                // Ngày tháng hiện tại
+                for (let i = 1; i <= lastDate; i++) {
+                    const isToday = i === today.getDate() && month === today.getMonth() && year === today.getFullYear();
+                    html += `<div class="day ${isToday ? 'today' : ''}">${i}</div>`;
+                }
+
+                // Ngày tháng sau
+                for (let j = 1; j <= nextDays; j++) {
+                    html += `<div class="day empty">${j}</div>`;
+                }
+
+                el.days.innerHTML = html;
+            };
+
+            // 2. Hàm Render Year List (Lazy Load khi click)
+            const renderYearList = () => {
+                if (!el.yearList) return;
+                const currentYear = today.getFullYear();
+                let yearHtml = "";
+                
+                for (let i = currentYear - 10; i <= currentYear + 10; i++) {
+                    const isActive = i === selectedDate.getFullYear() ? 'active-year' : '';
+                    yearHtml += `<div class="year-item ${isActive}" data-year="${i}">${i + 543}</div>`;
+                }
+                el.yearList.innerHTML = yearHtml;
+
+                // Event delegation cho Year Items
+                el.yearList.querySelectorAll('.year-item').forEach(item => {
+                    item.onclick = (e) => {
+                        e.stopPropagation();
+                        selectedDate.setFullYear(parseInt(item.dataset.year));
+                        render();
+                        el.yearList.classList.remove('show');
+                    };
+                });
+            };
+
+            // 3. Gán sự kiện
+            if (el.toggle) {
+                el.toggle.onclick = (e) => {
+                    e.stopPropagation();
+                    // Đóng các dropdown khác nếu có nhiều lịch
+                    document.querySelectorAll('.js__yearList.show').forEach(list => {
+                        if (list !== el.yearList) list.classList.remove('show');
+                    });
+                    renderYearList();
+                    el.yearList.classList.toggle('show');
+                };
+            }
+
+            if (el.prev) {
+                el.prev.onclick = (e) => {
+                    e.stopPropagation();
+                    selectedDate.setMonth(selectedDate.getMonth() - 1);
+                    render();
+                };
+            }
+
+            if (el.next) {
+                el.next.onclick = (e) => {
+                    e.stopPropagation();
+                    selectedDate.setMonth(selectedDate.getMonth() + 1);
+                    render();
+                };
+            }
+
+            render();
+        });
+
+        // 4. Xử lý click ngoài (Dùng 1 listener duy nhất bên ngoài vòng lặp)
+        document.addEventListener('click', () => {
+            document.querySelectorAll('.js__yearList.show').forEach(list => {
+                list.classList.remove('show');
+            });
+        });
+    }
+
+    // khởi tạo hàm đếm số lượng ảnh ở images
+    function initCounterImages() {
+        const galleries = document.querySelectorAll('.js__galleryImages');
+
+        galleries.forEach((gallery) => {
+            const items = gallery.querySelectorAll('.js__imgItem');
+            
+            if (items.length > 3) {
+                const fifthItem = items[2];
+                const remaining = items.length - 3; 
+                fifthItem.style.setProperty('--count', `"+${remaining}"`);
+            }
+        });
+    }
+
+
+
     // Khởi tạo fancybox
     function initFancybox() {
         const fancyboxes = document.querySelectorAll(".fancybox-full");
@@ -224,6 +368,75 @@ document.addEventListener("DOMContentLoaded", function () {
             });
 
         });
+    }
+
+     // xử lý sự kiện play audio
+    function handleAudio() {
+        const audioContainers = document.querySelectorAll(".js__audioContainer");
+
+        if (audioContainers.length === 0) return;
+
+        audioContainers.forEach((audioContainer)=>{
+
+            const audio = audioContainer.querySelector('.js__audioSource');
+            const playPauseBtn = audioContainer.querySelector('.js__audioPlay');
+            const seekSlider = audioContainer.querySelector('.js__audioRange');
+            const controlIcon = audioContainer.querySelector('.js__controlIcon');
+    
+            // Paths cho Icon SVG
+            const iconPaths = {
+                play: {
+                d: "M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z",
+                viewBox: "0 0 384 512"
+                },
+                pause: {
+                d: "M48 64C21.5 64 0 85.5 0 112V400c0 26.5 21.5 48 48 48H80c26.5 0 48-21.5 48-48V112c0-26.5-21.5-48-48-48H48zm192 0c-26.5 0-48 21.5-48 48V400c0 26.5 21.5 48 48 48h32c26.5 0 48-21.5 48-48V112c0-26.5-21.5-48-48-48H240z",
+                viewBox: "0 0 320 512"
+                }
+            };
+    
+            // Hàm cập nhật giao diện thanh kéo
+            const updateUI = () => {
+                const percentage = (audio.currentTime / audio.duration) * 100 || 0;
+                seekSlider.value = percentage;
+                seekSlider.style.backgroundSize = `${percentage}% 100%`;
+            };
+    
+            // Hàm đổi Icon
+            const toggleIcon = (type) => {
+                controlIcon.setAttribute('viewBox', iconPaths[type].viewBox);
+                controlIcon.querySelector('path').setAttribute('d', iconPaths[type].d);
+            };
+    
+            // 1. Sự kiện Play/Pause
+            playPauseBtn.addEventListener('click', () => {
+                if (audio.paused) {
+                audio.play();
+                toggleIcon('pause');
+                } else {
+                audio.pause();
+                toggleIcon('play');
+                }
+            });
+    
+            // 2. Cập nhật thanh range khi nhạc đang phát
+            audio.addEventListener('timeupdate', updateUI);
+    
+            // 3. Khi người dùng kéo thanh range (tua nhạc)
+            seekSlider.addEventListener('input', (e) => {
+                const seekTo = (e.target.value / 100) * audio.duration;
+                audio.currentTime = seekTo;
+                updateUI(); // Cập nhật màu sắc ngay lập tức khi kéo
+            });
+    
+            // 4. Xử lý khi nhạc kết thúc
+            audio.addEventListener('ended', () => {
+                toggleIcon('play');
+                seekSlider.value = 100;
+                seekSlider.style.backgroundSize = `100% 100%`;
+            });
+        })
+
     }
 
 
@@ -506,7 +719,10 @@ document.addEventListener("DOMContentLoaded", function () {
         handleShowSearchPc();
         handleShowSearchMb();
         handleChangeTab();
-        // initFancybox();
+        handlerCalendar();
+        initCounterImages();
+        initFancybox();
+        handleAudio();
         // initStickyContent();
         // slide
         initSliderOneItems();

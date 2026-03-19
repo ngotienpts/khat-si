@@ -150,6 +150,11 @@
         margin-top: 0;
     }
     /*-----------------------------------*/
+    .py-md-15 {
+        padding-top: 15px;
+        padding-bottom: 15px;
+    }
+    /*-----------------------------------*/
     .mt-md-20 {
         margin-top: 20px;
     }
@@ -231,6 +236,21 @@
     }
 
     // --------------------------------------------------------------------cate
+    .breadcrumb-secondary {
+        &__list {
+            flex-wrap: nowrap;
+            white-space: nowrap;
+            overflow: auto;
+
+        }
+
+        &__link {
+            &::before {
+                margin-top: 2px;
+            }
+        }
+        
+    }
  
     // --------------------------------------------------------------------detail
     .detail-tags {
@@ -238,6 +258,29 @@
             flex-wrap: nowrap;
             white-space: nowrap;
             overflow: auto;
+        }
+    }
+    .detail-title {
+        font-size: 30px;
+    }
+
+    .detail-content {
+        & figure {
+            
+            &.col-2,
+            &.col-3,
+            &.col-4 {
+                display: grid;
+                grid-template-columns: repeat(1,1fr);
+                grid-gap: 10px;
+
+                & figcaption {
+                    display: block;
+                    width: 100%;
+                    grid-column: 1 / 2;
+                }
+            }
+            
         }
     }
     // --------------------------------------------------------------------footer
@@ -355,6 +398,18 @@
     .fs-sm-18 {
         font-size: 18px;
     }
+    .ml-sm--10 {
+        margin-left: -10px;
+    }
+    .mr-sm--10 {
+        margin-right: -10px;
+    }
+    .ml-sm--15 {
+        margin-left: -15px;
+    }
+    .mr-sm--15 {
+        margin-right: -15px;
+    }
 
     // --------------------------------------------------------------------header
 
@@ -376,9 +431,51 @@
  
 
     // --------------------------------------------------------------------cate
+    // --------------------------------------------------------------------hinh anh
+    .images-primary {
+        &__list {
+            .article-img {
+                height: auto;
+                display: block;
+                position: relative;
+
+                &__item {
+                    position: relative;
+                    
+                    img {
+                        aspect-ratio: 396/193;
+                    }
+                    &:nth-child(n+2) {
+                        display: none;
+                    }
+        
+                }
+        
+                .counter-md {
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    z-index: 2;
+                    background-color: rgba(0, 0, 0, 0.64);
+                    padding: 4px 8px;
+                    border-bottom-right-radius: 8px;
+        
+                    img {
+                        width: 16px;
+                        height: auto;
+                        margin-right: 4px;
+                    }
+                }
+            }
+        }
+
+        &__item {
+            box-shadow: 0 2px 8px 1px rgba(0, 0, 0, 0.1);
+        }
+    }
 
     // -------------------------------------------------------------------- detail
-     p + p {
+    p + p {
         margin-top: 20px;
     }
 
@@ -386,6 +483,21 @@
         font-size: 24px;
     }
     
+    .detail-author {
+        &__img {
+            width: 34px;
+            height: 34px;
+        }
+        &__name {
+            font-size: 14px;
+        }
+    }
+
+    .detail-action {
+        margin-bottom: 20px;
+        padding-bottom: 12px;
+    }
+
 
     .detail-sapo {
         p {
@@ -401,9 +513,6 @@
             figcaption {
                 padding: 8px 10px;
                 font-size: 14px;
-            }
-            img {
-                border-radius: 5px;
             }
         }
         
@@ -429,6 +538,15 @@
         & h6 {
             font-size: 16px;
         }
+
+        & figure h2,
+        figure h3,
+        figure h4,
+        figure h5,
+        figure h6,
+        figure p {
+            font-size: 12px !important;
+        }
     
         & blockquote {
             padding: 20px;
@@ -442,6 +560,15 @@
         }
     }
 
+
+    .detail-tags {
+        .tag-link {
+            padding: 10px 20px;
+            font-size: 12px;
+            margin-right: 10px;
+            margin-bottom: 0;
+        }
+    }
 
 
     // --------------------------------------------------------------------footer
