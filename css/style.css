@@ -2991,6 +2991,58 @@ p + p {
 .pane-audio__input:hover::-moz-range-progress {
   background-color: #c6511c;
 }
+.pane-audio__action {
+  position: relative;
+}
+.pane-audio__action .action-mic img {
+  width: 20px;
+  height: auto;
+}
+.pane-audio__action .action-select {
+  position: relative;
+  margin-left: 5px;
+  cursor: pointer;
+}
+.pane-audio__action .action-select__title {
+  font-size: 14px;
+}
+.pane-audio__action .action-select__icon {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 5px;
+}
+.pane-audio__action .action-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  width: 200px;
+  background-color: #fff;
+  padding: 6px;
+  background-color: #fff;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  overflow: hidden;
+  display: none;
+  margin-top: 10px;
+}
+.pane-audio__action .action-dropdown__item {
+  display: block;
+  padding: 8px 12px;
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: 8px;
+  background-color: transparent;
+  cursor: pointer;
+}
+.pane-audio__action .action-dropdown__item:hover {
+  background-color: #f0f0f0;
+}
+.pane-audio__action.active .action-dropdown {
+  display: block;
+}
 
 .detail-title {
   font-size: 36px;
@@ -3038,6 +3090,10 @@ p + p {
 .detail-sapo p {
   line-height: 150%;
   font-weight: 500 !important;
+}
+
+.detail-content-chu-truong p {
+  text-align: left !important;
 }
 
 .detail-content figure {
@@ -3141,6 +3197,9 @@ p + p {
 }
 .detail-content ul li {
   list-style: disc;
+}
+.detail-content ul li ul li {
+  list-style: circle;
 }
 .detail-content h2, .detail-content h3, .detail-content h4, .detail-content h5, .detail-content h6 {
   font-weight: 600;

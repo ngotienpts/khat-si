@@ -371,73 +371,116 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
      // xử lý sự kiện play audio
-    function handleAudio() {
-        const audioContainers = document.querySelectorAll(".js__audioContainer");
+function handleAudio() {
+    const audioContainers = document.querySelectorAll(".js__audioContainer");
 
-        if (audioContainers.length === 0) return;
+    audioContainers.forEach((audioContainer) => {
+        // Lấy tất cả audio và các mục chọn
+        const allAudios = audioContainer.querySelectorAll('.js__audioSource');
+        const toneItems = audioContainer.querySelectorAll('.js__toneItem');
+        
+        const playPauseBtn = audioContainer.querySelector('.js__audioPlay');
+        const seekSlider = audioContainer.querySelector('.js__audioRange');
+        const controlIcon = audioContainer.querySelector('.js__controlIcon');
+        
+        // Các phần tử điều khiển dropdown
+        const audioAction = audioContainer.querySelector('.js__audioAction');
+        const showSelectBtn = audioContainer.querySelector('.js__showSelectTone');
+        const toneTitle = audioContainer.querySelector('.js__setTone');
 
-        audioContainers.forEach((audioContainer)=>{
+        const iconPaths = {
+            play: { d: "M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z", viewBox: "0 0 384 512" },
+            pause: { d: "M48 64C21.5 64 0 85.5 0 112V400c0 26.5 21.5 48 48 48H80c26.5 0 48-21.5 48-48V112c0-26.5-21.5-48-48-48H48zm192 0c-26.5 0-48 21.5-48 48V400c0 26.5 21.5 48 48 48h32c26.5 0 48-21.5 48-48V112c0-26.5-21.5-48-48-48H240z", viewBox: "0 0 320 512" }
+        };
 
-            const audio = audioContainer.querySelector('.js__audioSource');
-            const playPauseBtn = audioContainer.querySelector('.js__audioPlay');
-            const seekSlider = audioContainer.querySelector('.js__audioRange');
-            const controlIcon = audioContainer.querySelector('.js__controlIcon');
-    
-            // Paths cho Icon SVG
-            const iconPaths = {
-                play: {
-                d: "M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z",
-                viewBox: "0 0 384 512"
-                },
-                pause: {
-                d: "M48 64C21.5 64 0 85.5 0 112V400c0 26.5 21.5 48 48 48H80c26.5 0 48-21.5 48-48V112c0-26.5-21.5-48-48-48H48zm192 0c-26.5 0-48 21.5-48 48V400c0 26.5 21.5 48 48 48h32c26.5 0 48-21.5 48-48V112c0-26.5-21.5-48-48-48H240z",
-                viewBox: "0 0 320 512"
-                }
-            };
-    
-            // Hàm cập nhật giao diện thanh kéo
-            const updateUI = () => {
-                const percentage = (audio.currentTime / audio.duration) * 100 || 0;
-                seekSlider.value = percentage;
-                seekSlider.style.backgroundSize = `${percentage}% 100%`;
-            };
-    
-            // Hàm đổi Icon
-            const toggleIcon = (type) => {
-                controlIcon.setAttribute('viewBox', iconPaths[type].viewBox);
-                controlIcon.querySelector('path').setAttribute('d', iconPaths[type].d);
-            };
-    
-            // 1. Sự kiện Play/Pause
-            playPauseBtn.addEventListener('click', () => {
-                if (audio.paused) {
-                audio.play();
+        // Hàm lấy audio đang có class active
+        const getActiveAudio = () => audioContainer.querySelector('.js__audioSource.active');
+
+        const updateUI = () => {
+            const activeAudio = getActiveAudio();
+            if (!activeAudio || !activeAudio.duration) return;
+            const percentage = (activeAudio.currentTime / activeAudio.duration) * 100;
+            seekSlider.value = percentage;
+            seekSlider.style.backgroundSize = `${percentage}% 100%`;
+        };
+
+        const toggleIcon = (type) => {
+            controlIcon.setAttribute('viewBox', iconPaths[type].viewBox);
+            controlIcon.querySelector('path').setAttribute('d', iconPaths[type].d);
+        };
+
+        // --- SỰ KIỆN CHÍNH ---
+
+        // 1. Mở/Đóng dropdown bằng cách add class active vào js__audioAction
+        showSelectBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            audioAction.classList.toggle('active');
+        });
+
+        // 2. Click chọn giọng (js__toneItem)
+        toneItems.forEach((item, index) => {
+            item.addEventListener('click', function() {
+                // Đổi Text
+                toneTitle.innerText = this.innerText;
+                
+                // Dừng audio cũ
+                const oldAudio = getActiveAudio();
+                oldAudio.pause();
+                oldAudio.currentTime = 0;
+                oldAudio.classList.remove('active');
+
+                // Kích hoạt audio mới dựa trên index (thứ tự)
+                const newAudio = allAudios[index];
+                newAudio.classList.add('active');
+
+                // Phát audio mới
+                newAudio.play();
                 toggleIcon('pause');
-                } else {
-                audio.pause();
+
+                // Đóng dropdown
+                audioAction.classList.remove('active');
+            });
+        });
+
+        // 3. Play/Pause nút chính
+        playPauseBtn.addEventListener('click', () => {
+            const activeAudio = getActiveAudio();
+            if (activeAudio.paused) {
+                activeAudio.play();
+                toggleIcon('pause');
+            } else {
+                activeAudio.pause();
                 toggleIcon('play');
-                }
+            }
+        });
+
+        // 4. Đồng bộ thanh kéo và sự kiện kết thúc cho TẤT CẢ audio
+        allAudios.forEach(audio => {
+            audio.addEventListener('timeupdate', () => {
+                if (audio.classList.contains('active')) updateUI();
             });
-    
-            // 2. Cập nhật thanh range khi nhạc đang phát
-            audio.addEventListener('timeupdate', updateUI);
-    
-            // 3. Khi người dùng kéo thanh range (tua nhạc)
-            seekSlider.addEventListener('input', (e) => {
-                const seekTo = (e.target.value / 100) * audio.duration;
-                audio.currentTime = seekTo;
-                updateUI(); // Cập nhật màu sắc ngay lập tức khi kéo
-            });
-    
-            // 4. Xử lý khi nhạc kết thúc
             audio.addEventListener('ended', () => {
                 toggleIcon('play');
-                seekSlider.value = 100;
-                seekSlider.style.backgroundSize = `100% 100%`;
+                seekSlider.value = 0;
+                seekSlider.style.backgroundSize = `0% 100%`;
             });
-        })
+        });
 
-    }
+        // 5. Tua nhạc
+        seekSlider.addEventListener('input', (e) => {
+            const activeAudio = getActiveAudio();
+            if (!activeAudio.duration) return;
+            const seekTo = (e.target.value / 100) * activeAudio.duration;
+            activeAudio.currentTime = seekTo;
+        });
+
+        // Click ra ngoài thì đóng dropdown
+        document.addEventListener('click', () => {
+            audioAction.classList.remove('active');
+        });
+    });
+}
+
 
 
     // khởi tạo slider với nhiều item có width auto
